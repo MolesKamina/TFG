@@ -31,10 +31,10 @@ def server_main():
         sensor = process_message(message)
 
         # Mostrar mensaje de procesamiento
-        print("Mensaje recibido y procesado:")
+        #print("Mensaje recibido y procesado:")
 
         # Mostrar contenido del sensor
-        print_sensor_content(sensor)
+        #print_sensor_content(sensor)
 
         # Aquí puedes continuar con el procesamiento del sensor
         db_manager.insert_sensor_node(sensor.nodo.get_identificador(), sensor.nodo.get_nodos_vecinos())

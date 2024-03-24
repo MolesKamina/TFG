@@ -21,14 +21,10 @@ class DatabaseManager:
 
     def insert_sensor_node(self, sensor_id, neighbors, description=None):
         try:
-            #cursor = self.connection.cursor()
             current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             query = "INSERT INTO sensor_nodes (id, description, date) VALUES (%s, %s, %s)"
             values = (sensor_id, description, current_time)
-            #cursor.execute(query, (sensor_id, description, current_time))
-            #self.connection.commit()
             self.execute_query(query, values)
-            #cursor.close()
             self.close()
         except Exception as e:
             print("Error:", e)
@@ -36,10 +32,8 @@ class DatabaseManager:
             try:
                 current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 query = "INSERT INTO sensor_nodes (id, description, date) VALUES (%s, %s, %s)"
-                #cursor.execute(query, (neighbor_id, description, current_time))
-                #self.connection.commit()
                 values = (neighbor_id, description, current_time)
-                print(values)
+                #print(values)
                 self.execute_query(query, values)
                 self.close()
             except Exception as e:
@@ -47,14 +41,11 @@ class DatabaseManager:
 
     def insert_node_neighbor(self, sensor_id, neighbors):
         try:
-            #cursor = self.connection.cursor()
             for neighbor_id in neighbors:
                 current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
                 query = "INSERT INTO nodes_neighbours (id_sensor_a, id_sensor_b, date) VALUES (%s, %s, %s)"
                 values = (sensor_id, neighbor_id, current_time)
                 self.execute_query(query, values)
-                #self.connection.commit()
-            #cursor.close()
             self.close()
         except Exception as e:
             print("Error:", e)

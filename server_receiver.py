@@ -22,9 +22,6 @@ def server_receiver():
         # Procesar el mensaje
         sensor_id, value, timestamp = process_message(message)
 
-        # Mostrar el mensaje recibido
-        print(f"Mensaje recibido: Sensor ID: {sensor_id}, Valor: {value}, Timestamp: {timestamp}")
-
         # Insertar la información en la base de datos
         db_manager.insert_sensor_data(sensor_id, value, timestamp)
 
