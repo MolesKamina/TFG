@@ -59,11 +59,33 @@ class DatabaseManager:
         except Exception as e:
             print("Error:", e)
     
-    def execute_query(self, query, values=None):
-        # Ejecutar una consulta SQL
+    def execute_query(self, query, values=None, select=False):
+        """
+        Ejecuta una consulta SQL en la base de datos.
+
+        Args:
+            query (str): La consulta SQL a ejecutar.
+            values (tuple, opcional): Valores para los parámetros de la consulta, si los hay.
+            select (bool, opcional): Indica si la consulta es un SELECT. Por defecto, es False.
+
+        Returns:
+            result (list or None): La lista de resultados si select=True, None en caso contrario.
+        """
         self.cursor = self.connection.cursor()
-        if values:
-            self.cursor.execute(query, values)
-        else:
-            self.cursor.execute(query)
-        self.connection.commit()
+
+        try:
+            if values:
+                self.cursor.execute(query, values)
+            else:
+                self.cursor.execute(query)
+
+            if select:
+                result = self.cursor.fetchall()
+                return result
+            else:
+                self.connection.commit()
+        except Exception as e:
+            print("Error:", e)
+        finally:
+            self.close()
+
