@@ -19,19 +19,20 @@ class DatabaseManager:
         if self.cursor:
             self.cursor.close()
 
-    def insert_sensor_node(self, sensor_id, neighbors, description=None):
+    def insert_node(self, node_id, neighbors, description=None):
         try:
             current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            query = "INSERT INTO sensor_nodes (id, description, date) VALUES (%s, %s, %s)"
-            values = (sensor_id, description, current_time)
+            query = "INSERT INTO nodes (id, description, date) VALUES (%s, %s, %s)"
+            values = (node_id, description, current_time)
             self.execute_query(query, values)
             self.close()
         except Exception as e:
             print("Error:", e)
+
         for neighbor_id in neighbors:
             try:
                 current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                query = "INSERT INTO sensor_nodes (id, description, date) VALUES (%s, %s, %s)"
+                query = "INSERT INTO nodes (id, description, date) VALUES (%s, %s, %s)"
                 values = (neighbor_id, description, current_time)
                 #print(values)
                 self.execute_query(query, values)
@@ -39,17 +40,29 @@ class DatabaseManager:
             except Exception as e:
                 print("Error:", e)
 
-    def insert_node_neighbor(self, sensor_id, neighbors):
+    def insert_node_neighbors(self, node_id, neighbors):
         try:
             for neighbor_id in neighbors:
                 current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                query = "INSERT INTO nodes_neighbours (id_sensor_a, id_sensor_b, date) VALUES (%s, %s, %s)"
-                values = (sensor_id, neighbor_id, current_time)
+                query = "INSERT INTO nodes_neighbors (id_node_a, id_node_b, date) VALUES (%s, %s, %s)"
+                values = (node_id, neighbor_id, current_time)
                 self.execute_query(query, values)
             self.close()
         except Exception as e:
             print("Error:", e)
     
+    def insert_sensor(self, sensor_id, node_id,  description=None):
+        try:
+            current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            query = "INSERT INTO sensors (id, node_id, description, date) VALUES (%s, %s, %s, %s)"
+            values = (sensor_id, node_id, description, current_time)
+            print(query)
+            print(values)
+            self.execute_query(query, values)
+            self.close()
+        except Exception as e:
+            print("Error:", e)
+
     def insert_sensor_data(self, sensor_id, data, date):
         try:
             query = "INSERT INTO sensor_values (id_sensor, value, date) VALUES (%s, %s, %s)"
