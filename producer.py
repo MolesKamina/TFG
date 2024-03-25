@@ -24,5 +24,3 @@ class Producer(MessageClient):
 
         # Es importante llamar a flush para asegurarse de que el mensaje se envíe
         self.producer.flush()
-
-        # No cerramos el productor aquí para permitir reutilizarlo
