@@ -79,6 +79,41 @@ class DatabaseManager:
         except Exception as e:
             print("Error:", e)
     
+    def extract_actuators(self, id_nodes):
+        try:
+            placeholders = ', '.join(['%s' for _ in id_nodes])
+            query = f"""
+            SELECT id FROM actuators
+            WHERE node_id IN ({placeholders})
+            """
+            actuators = self.execute_query(query, values=id_nodes, select=True)
+            return actuators
+        except Exception as e:
+            print("Error:", e)
+    
+    def extract_nodes(self):
+        try:
+            query = "SELECT id FROM nodes"
+            nodes = self.execute_query(query, select=True)
+            return nodes
+        except Exception as e:
+            print("Error:", e)
+    
+    def extract_nodes_action(self, node_ids, date):
+        try:
+            node_placeholders = ', '.join(['%s' for _ in node_ids])
+            values = tuple(node_ids) + (date,)
+            query = f"""
+            SELECT node_id, action
+            FROM nodes_actions
+            WHERE node_id IN ({node_placeholders})
+            AND DATE(date) = %s                                                           
+            """
+            nodes = self.execute_query(query, values, select=True)
+            return nodes
+        except Exception as e:
+            print("Error:", e)
+
     def execute_query(self, query, values=None, select=False):
         """
         Ejecuta una consulta SQL en la base de datos.

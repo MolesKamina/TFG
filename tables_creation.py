@@ -35,6 +35,13 @@ def create_tables(databaseManager):
                         date DATETIME,
                         FOREIGN KEY (id_sensor) REFERENCES sensors(id)
                         )""")
+    queries.append("""CREATE TABLE IF NOT EXISTS nodes_actions (
+                        action_id INT AUTO_INCREMENT PRIMARY KEY,
+                        node_id VARCHAR(255),
+                        action VARCHAR(255),
+                        date DATETIME,
+                        FOREIGN KEY (node_id) REFERENCES nodes(id)
+                        )""")
     for query in queries:
         databaseManager.execute_query(query)
 
