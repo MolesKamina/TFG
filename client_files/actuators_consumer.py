@@ -6,76 +6,63 @@ import os
 import pandas as pd
 from multiprocessing import Process
 
-def createActuator(message):
+# Function to create an Actuator object
+def create_actuator(message):
     actuator_id, node_id, description = message
-    actuador = Actuador(actuator_id, description, Nodo(node_id))
-    return actuador
+    actuator = Actuador(actuator_id, description, Nodo(node_id))
+    return actuator
 
-def assign_actuator(var_node_id, act_df, actions_df):
+# Function to assign actions to actuators based on received messages
+def assign_actions(node_id, act_df, actions_df):
     actuators = act_df[act_df['node_id'] == node_id]
-    #filtro = act_df['node_id'] == var_node_id
-    #print(filtro)
     for index, row in actuators.iterrows():
-        a_id = row['actuator_id']
-        n_id = row['node_id']
-        d_id = row['description']
-        #print(actions_df)
+        actuator_id = row['actuator_id']
+        description = row['description']
         for j, action_row in actions_df.iterrows():
             action = action_row['action']
             date_action = action_row['date']
-            a = Actuador(a_id, d_id, Nodo(n_id))
-            a.ejecutar_accion(action, date_action)
-    
-
-    #print(actuators)
+            actuator = Actuador(actuator_id, description, Nodo(node_id))
+            actuator.execute_action(action, date_action)
 
 if __name__ == "__main__":
     actuators_file = "actuators.txt"
-    fr = FileReader()
+    file_reader = FileReader()
     actuators = []
     processes = []
     consumer = Consumer(['Topic5'], 'bmoles.ddns.net:9092', enable_auto_commit=True)
-    # Verificar si el archivo de actuadores existe
+
+    # Check if the actuators file exists
     if not os.path.exists(actuators_file):
-        print(f"El archivo de actuadores '{actuators_file}' no existe.")
+        print(f"The actuators file '{actuators_file}' does not exist.")
     else:
-        # Procesar los actuadores
-        actuators_data = fr.read_actuators_file(actuators_file)
+        # Process actuators
+        actuators_data = file_reader.read_actuators_file(actuators_file)
         for a in actuators_data:
-            act = createActuator(a)
+            actuator = create_actuator(a)
             actuators.append(a)
-        #print(actuators)
+
         actuator_list = pd.DataFrame(actuators, columns=['actuator_id', 'node_id', 'description'])
         actions_df = pd.DataFrame(columns=['node_id', 'action', 'date'])
-        #print(actions_df)
         node_count = actuator_list['node_id'].nunique()
         end_count = 0
-
         while end_count != node_count:
             msg = consumer.receive_message('Topic5')
-            #actions_df = actions_df.append(msg, ignore_index=True)
-            #actions_df += pd.DataFrame(msg)
             node_id, action, date_str = msg.split(',')
-            if action == 'FIN':
-                end_count += 1
-                #print(node_count)
-                #print(end_count)
-            else:
-                date = pd.to_datetime(date_str)
-                df = pd.DataFrame([[node_id, action, date]], columns=['node_id', 'action', 'date'])
-                actions_df = pd.concat([actions_df, df], ignore_index=True)
-                #print(msg)
-                #print(actions_df)
-        #print(actions_df) 
+            if node_id in actuator_list['node_id'].values:
+                if action == 'FIN':
+                    end_count += 1
+                else:
+                    date = pd.to_datetime(date_str)
+                    df = pd.DataFrame([[node_id, action, date]], columns=['node_id', 'action', 'date'])
+                    actions_df = pd.concat([actions_df, df], ignore_index=True)
 
+        actions_df = actions_df.sort_values(by='date')
         group_by_node = actions_df.groupby('node_id')
+        
         for node_id, group_node in group_by_node:
-            #print(node_id)
-            #assign_actuator(node_id, actuator_list, group_node)
-            p = Process(target=assign_actuator, args=(node_id, actuator_list, group_node))
+            p = Process(target=assign_actions, args=(node_id, actuator_list, group_node))
             processes.append(p)
             p.start()
         
         for p in processes:
             p.join()
-

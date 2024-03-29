@@ -1,18 +1,24 @@
+import sys
 from planner_creator import Planificador
 from databaseManager import DatabaseManager
 
+# Check if the correct number of command-line arguments is provided
+if len(sys.argv) != 2:
+    print("Usage: python script.py <date>")
+    sys.exit(1)
 
+# Extract the date from the command-line argument
+date = sys.argv[1]
 
-
-# Crear una instancia de DatabaseManager
+# Create an instance of DatabaseManager
 db_manager = DatabaseManager(host="bmoles.ddns.net", username="kafka", 
                              password="26Kafka97*", database="proyecto_db")
 
-# Crear una instancia de Planificador
+# Create an instance of Planificador
 planificador = Planificador(db_manager)
 
-# Establecer la fecha
-planificador.set_date('2024-03-25')
+# Set the date
+planificador.set_date(date)
 
-# Generar y ejecutar el plan
+# Generate and execute the plan
 planificador.set_plan()
