@@ -16,6 +16,6 @@ class Actuador(Dispositivo):
     def get_nodo(self):
         return self.nodo
 
-    def ejecutar_accion(self, accion):
+    def ejecutar_accion(self, accion, fecha):
         # Simular ejecución de una acción
-        print(f"Ejecutando acción {accion} en el nodo {self.get_id()}")
+        print(f"Ejecutando acción {accion}, fecha: {fecha} en el actuador {self.get_id()}")

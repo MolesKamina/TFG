@@ -79,6 +79,15 @@ class DatabaseManager:
         except Exception as e:
             print("Error:", e)
     
+    def insert_node_action(self, node_id, action, date):
+        try:
+            query = "INSERT INTO nodes_actions (node_id, action, date) VALUES (%s, %s, %s)"
+            values = (node_id, action, date)
+            self.execute_query(query, values)
+            self.close()
+        except Exception as e:
+            print("Error:", e)
+
     def extract_actuators(self, id_nodes):
         try:
             placeholders = ', '.join(['%s' for _ in id_nodes])
@@ -95,6 +104,7 @@ class DatabaseManager:
         try:
             query = "SELECT id FROM nodes"
             nodes = self.execute_query(query, select=True)
+            self.close()
             return nodes
         except Exception as e:
             print("Error:", e)
@@ -104,13 +114,33 @@ class DatabaseManager:
             node_placeholders = ', '.join(['%s' for _ in node_ids])
             values = tuple(node_ids) + (date,)
             query = f"""
-            SELECT node_id, action
+            SELECT node_id, action, date
             FROM nodes_actions
             WHERE node_id IN ({node_placeholders})
             AND DATE(date) = %s                                                           
             """
             nodes = self.execute_query(query, values, select=True)
+            self.close()
             return nodes
+        except Exception as e:
+            print("Error:", e)
+
+
+    def extract_nodes_values(self, node_ids, date):
+        try:
+            node_placeholders = ', '.join(['%s' for _ in node_ids])
+            values = tuple(node_ids) + (date,)
+            query = f"""
+            SELECT node_id, value, A.date
+            FROM sensor_values A
+            INNER JOIN sensors B
+            ON A.id_sensor = B.id
+            WHERE node_id IN ({node_placeholders})
+            AND DATE(A.date) = %s
+            """
+            nodes_values = self.execute_query(query, values, select=True)
+            self.close()
+            return nodes_values
         except Exception as e:
             print("Error:", e)
 

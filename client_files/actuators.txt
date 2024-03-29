@@ -8,3 +8,8 @@
 8,8,Actuador 8
 9,9,Actuador 9
 10,10,Actuador 10
+11,11,Actuador 11
+12,2,Actuador 12
+13,3,Actuador 13
+14,4,Actuador 14
+15,5,Actuador 15
