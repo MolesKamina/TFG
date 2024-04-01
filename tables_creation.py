@@ -1,5 +1,11 @@
 from databaseManager import DatabaseManager
 def create_tables(databaseManager):
+    """
+    Prepara y lanza una serie de consultas para la creación de tablas en la base de datos.
+
+    Args:
+        databaseManager (DatabaseManager): Instancia de DatabaseManager para ejecutar las consultas.
+    """
     queries = []
     queries.append("""CREATE TABLE IF NOT EXISTS nodes (
                         id VARCHAR(255) PRIMARY KEY,
