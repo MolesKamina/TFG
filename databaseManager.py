@@ -242,6 +242,34 @@ class DatabaseManager:
         except Exception as e:
             print("Error:", e)
 
+    def extract_all_nodes_values(self, node_ids, date):
+        """
+        Extrae los valores de los sensores asociados a una lista de nodos en todos los días anteriores a una fecha específica.
+
+        Args:
+            node_ids (list): Lista de identificadores de los nodos.
+            date (datetime): Fecha límite (los valores se extraerán para todos los días anteriores a esta fecha).
+
+        Returns:
+            nodes_values (list): Lista de tuplas que contienen el identificador del nodo, el valor del sensor y la fecha del valor.
+        """
+        try:
+            node_placeholders = ', '.join(['%s' for _ in node_ids])
+            values = tuple(node_ids) + (date,)
+            query = f"""
+            SELECT node_id, value, A.date
+            FROM sensor_values A
+            INNER JOIN sensors B
+            ON A.id_sensor = B.id
+            WHERE node_id IN ({node_placeholders})
+            AND DATE(A.date) < %s
+            """
+            nodes_values = self.execute_query(query, values, select=True)
+            self.close()
+            return nodes_values
+        except Exception as e:
+            print("Error:", e)
+
     def execute_query(self, query, values=None, select=False):
         """
         Ejecuta una consulta SQL en la base de datos.

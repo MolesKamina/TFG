@@ -1,5 +1,9 @@
+from kafka import KafkaProducer
+from kafka import KafkaConsumer
+from json import dumps, loads
+
 class MessageClient:
-    def __init__(self, topic_list, bootstrap_servers, enable_auto_commit):
+    def __init__(self, topic_list, bootstrap_servers, enable_auto_commit, type: bool):
         """
         Inicializa un nuevo cliente de mensajes.
 
@@ -11,27 +15,37 @@ class MessageClient:
         self.topic_list = topic_list
         self.bootstrap_servers = bootstrap_servers
         self.enable_auto_commit = enable_auto_commit
+        self.producer = None
+        self.consumer = None
+        if type:
+            self.producer = KafkaProducer(bootstrap_servers=self.bootstrap_servers, 
+                value_serializer=lambda x: dumps(x).encode('utf-8'))
+        else:
+            self.consumer = KafkaConsumer(
+                *topic_list,
+                bootstrap_servers=bootstrap_servers,
+                enable_auto_commit=enable_auto_commit,
+                value_deserializer=lambda x: loads(x.decode('utf-8'))
+            ) 
+
+    def open(self):
+        if self.producer is None:
+            self.producer = KafkaProducer(bootstrap_servers=self.bootstrap_servers, 
+                                          value_serializer=lambda x: dumps(x).encode('utf-8'))
+
+    def close(self):
+        if self.producer is not None:
+            self.producer.close()
+            self.producer = None
 
     def send_message(self, topic, message_content):
-        """
-        Envía un mensaje al topic especificado.
+        self.open()  # Abre el productor si aún no está abierto
+        self.producer.send(topic, message_content)
 
-        Args:
-            topic (str): El topic al que se enviará el mensaje.
-            message_content (str): El contenido del mensaje a enviar.
-        """
-        # Método para enviar mensajes
-        pass
+        # Es importante llamar a flush para asegurarse de que el mensaje se envíe
+        self.producer.flush()
 
     def receive_message(self, topic):
-        """
-        Recibe un mensaje del topic especificado.
-
-        Args:
-            topic (str): El topic del cual se quiere recibir el mensaje.
-
-        Returns:
-            str: El contenido del mensaje recibido.
-        """
-        # Método para recibir mensajes
-        pass
+        for message in self.consumer:
+            if message.topic == topic:
+                return message.value

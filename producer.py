@@ -1,26 +1,24 @@
-from kafka import KafkaProducer
+#from kafka import KafkaProducer
 from message_client import MessageClient
-from json import dumps
+#from json import dumps
 
 class Producer(MessageClient):
-    def __init__(self, topic_list, bootstrap_servers, enable_auto_commit=True):
-        super().__init__(topic_list, bootstrap_servers, enable_auto_commit)
-        self.producer = None
-        self.bootstrap_servers = bootstrap_servers
+    def __init__(self, bootstrap_servers, enable_auto_commit=True):
+        """
+        Inicializa un nuevo cliente productor de mensajes.
+
+        Args:
+            topic_list (list): Lista de topics a los que el cliente se suscribirá.
+            bootstrap_servers (str): Lista de servidores para establecer la conexión.
+            enable_auto_commit (bool): Indicador para habilitar o deshabilitar el commit automático de offsets.
+        """
+        super().__init__(None, bootstrap_servers, enable_auto_commit, True)
 
     def open(self):
-        if self.producer is None:
-            self.producer = KafkaProducer(bootstrap_servers=self.bootstrap_servers, 
-                                          value_serializer=lambda x: dumps(x).encode('utf-8'))
+        super().open()
 
     def close(self):
-        if self.producer is not None:
-            self.producer.close()
-            self.producer = None
+        super().close()
 
     def send_message(self, topic, message_content):
-        self.open()  # Abre el productor si aún no está abierto
-        self.producer.send(topic, message_content)
-
-        # Es importante llamar a flush para asegurarse de que el mensaje se envíe
-        self.producer.flush()
+        super().send_message(topic, message_content)

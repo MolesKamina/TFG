@@ -1,6 +1,6 @@
 from consumer import Consumer
-from nodo import Nodo
-from sensor import Sensor
+#from nodo import Nodo
+#from sensor import Sensor
 from databaseManager import DatabaseManager
 
 def process_message(message):
