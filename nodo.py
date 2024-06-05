@@ -10,3 +10,4 @@ class Nodo:
 
     def get_nodos_vecinos(self):
         return self.nodos_vecinos
+    

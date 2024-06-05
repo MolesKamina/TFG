@@ -5,10 +5,7 @@ from nodo import Nodo
 
 class Sensor(Dispositivo):
     def __init__(self, id, description, nodo: Nodo=None):
-        self.id = id
-        self.description = description
-        if nodo:
-            super().__init__(nodo)
+        super().__init__(id, description, nodo)
 
     def get_id(self):
         return self.id

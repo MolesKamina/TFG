@@ -11,9 +11,7 @@ class Actuador(Dispositivo):
             description (str): Descripción del actuador.
             nodo (Nodo): Nodo al que está asociado el actuador.
         """
-        self.id = id
-        self.description = description
-        super().__init__(nodo)
+        super().__init__(id, description, nodo)
 
     def get_id(self):
         """
@@ -42,7 +40,7 @@ class Actuador(Dispositivo):
         """
         return self.nodo
 
-    def ejecutar_accion(self, accion, fecha):
+    def ejecutar_accion(self, action, date):
         """
         Ejecuta una acción en el actuador.
 
@@ -51,4 +49,4 @@ class Actuador(Dispositivo):
             fecha (str): Fecha de la acción (en formato 'YYYY-MM-DD HH:MM:SS').
         """
         # Simula la ejecución de una acción
-        print(f"Ejecutando acción {accion}, fecha: {fecha} en el actuador {self.get_id()}")
+        print(f"Ejecutando acción {action}, fecha: {date} en el actuador {self.get_id()}")
