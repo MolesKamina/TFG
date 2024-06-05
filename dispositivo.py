@@ -1,3 +1,4 @@
+# dispositivo.py
 from nodo import Nodo
 
 class Dispositivo:
