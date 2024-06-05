@@ -4,11 +4,13 @@ from nodo import Nodo
 class Dispositivo:
     def __init__(self, id, description, nodo: Nodo=None):
         """
-        Inicializa un nuevo dispositivo asociado a un nodo. La clase Dispositivo es la clase 
-        encargada de gestionar el apartado de nodos en el sistema.
+        Inicializa un nuevo dispositivo que gestiona la información relacionada con 
+        Sensores y Actuadores.
 
         Args:
-            nodo (Nodo): El nodo al que está asociado el dispositivo.
+            id (str): El identificador único del dispositivo.
+            description (str): La descripción del dispositivo.
+            nodo (Nodo): El nodo al que está asociado el dispositivo, si aplica.
         """
         self.id = id
         self.description = description
